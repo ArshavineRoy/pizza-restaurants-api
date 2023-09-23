@@ -21,13 +21,13 @@ This is a Flask API that simulates a Pizza Restaurant domain.
 ### 1. Clone the repository
 
 ```txt
-git clone https://github.com/ArshavineRoy/pizza-restaurants
+git clone https://github.com/ArshavineRoy/pizza-restaurants-api
 ```
 
 ### 2. Navigate to the project's directory
 
 ```txt
-cd pizza-restaurants
+cd pizza-restaurants-api
 ```
 
 ### 3. Install required dependencies
