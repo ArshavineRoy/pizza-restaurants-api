@@ -29,9 +29,47 @@ class Home(Resource):
         return response
 api.add_resource(Home, '/')
 
+class Restaurants(Resource):
+
+    def get(self):
+        restaurants = Restaurant.query.all()
+
+        if not restaurants:
+            response_body = {
+                "message": "This record does not exist in our database. Please try again."
+            }
+
+            response = make_response(
+                response_body,
+                404
+            )
+            return response
+        else:
+            response_dict = [restaurant.to_dict() for restaurant in restaurants]
+
+            response = make_response(
+                response_dict,
+                200
+            )
+            return response
+        
 
 
+api.add_resource(Restaurants, '/restaurants')
 
+class RestaurantByID(Resource):
+    def get(self):
+        pass
+
+
+api.add_resource(RestaurantByID, '/restaurants/<int:id>')
+
+
+class Pizzas(Resource):
+    def get(self):
+        pass
+
+api.add_resource(Pizzas, '/pizzas')
 
 
 if __name__ == '__main__':
