@@ -45,9 +45,20 @@ class RestaurantByIDSchema(ma.SQLAlchemySchema):
     name = ma.auto_field()
     address = ma.auto_field()
 
-
-
 restaurant_by_id_schema = RestaurantByIDSchema()
+
+
+class PizzasSchema(ma.SQLAlchemySchema):
+
+    class Meta:
+        model = Pizza
+        ordered=True
+    
+    id = ma.auto_field()
+    name = ma.auto_field()
+    ingredients = ma.auto_field()
+
+pizzas_schema = PizzasSchema(many=True)
 
 class Home(Resource):
     def get(self):
@@ -112,14 +123,49 @@ class RestaurantByID(Resource):
                 200
             )
             return response
+        
+    def delete(self, id):
+        restaurant = Restaurant.query.filter(Restaurant.id == id).first()
+        
+        db.session.delete(restaurant)
+        db.session.commit()
 
+        response_body ={
+            "Message": "Restaurant deleted successfully."
+        }
+
+        response = make_response(
+            response_body,
+            200
+        )
+
+        return response
 
 api.add_resource(RestaurantByID, '/restaurants/<int:id>')
 
 
 class Pizzas(Resource):
+
     def get(self):
-        pass
+        pizzas = Pizza.query.all()
+
+        if not pizzas:
+            response_body = {
+                "message": "This record does not exist in our database. Please try again."
+            }
+
+            response = make_response(
+                response_body,
+                404
+            )
+            return response
+        else:
+
+            response = make_response(
+                pizzas_schema.dump(pizzas),
+                200
+            )
+            return response
 
 api.add_resource(Pizzas, '/pizzas')
 
