@@ -202,6 +202,3 @@ class RestaurantPizzas(Resource):
         return response
 
 api.add_resource(RestaurantPizzas, '/restaurant_pizzas')
-
-if __name__ == '__main__':
-    app.run(port=5555, debug=True)
