@@ -4,7 +4,7 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_restful import Api
 
-from models import db, Plant
+from models import db, Restaurant, Pizza, RestaurantPizza
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
