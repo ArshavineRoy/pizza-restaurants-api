@@ -50,7 +50,7 @@ pipenv shell
 
 ### 5. Run the Flask server
 
-Navigate to the `app` directory and run:
+Navigate to the `server` directory and run:
 
 ```python
 python3 run.py
@@ -59,7 +59,6 @@ python3 run.py
 
 
 ## Usage
-### Routes
 
 1. **GET/restaurants**
 
