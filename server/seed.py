@@ -111,7 +111,7 @@ if __name__ == '__main__':
         for res in ke_restaurants:
             restaurant = Restaurant(
                 name=res,
-                address=fake.address()
+                address=f"{fake.street_address()}, Nairobi"
             )
 
             restaurants.append(restaurant)
