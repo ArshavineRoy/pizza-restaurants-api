@@ -14,16 +14,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["JSON_SORT_KEYS"] = False
 app.json.compact = False
 
-
-
- 
-
 migrate = Migrate(app, db)
 db.init_app(app)
 ma = Marshmallow(app)
 
 api = Api(app)
-
 
 class RestaurantSchema(ma.SQLAlchemySchema):
     class Meta:
@@ -47,7 +42,6 @@ class RestaurantByIDSchema(ma.SQLAlchemySchema):
 
 restaurant_by_id_schema = RestaurantByIDSchema()
 
-
 class PizzasSchema(ma.SQLAlchemySchema):
 
     class Meta:
@@ -59,6 +53,17 @@ class PizzasSchema(ma.SQLAlchemySchema):
     ingredients = ma.auto_field()
 
 pizzas_schema = PizzasSchema(many=True)
+
+class RestaurantPizzaSchema(ma.SQLAlchemySchema):
+
+    class Meta:
+        model = RestaurantPizza
+        ordered=True
+    
+    id = ma.auto_field()
+    price = ma.auto_field()
+
+restaurant_pizza_schema = RestaurantPizzaSchema()
 
 class Home(Resource):
     def get(self):
@@ -169,6 +174,26 @@ class Pizzas(Resource):
 
 api.add_resource(Pizzas, '/pizzas')
 
+class RestaurantPizzas(Resource):
+
+    def post(self):
+        restaurant_pizza = RestaurantPizza(
+            price=int(request.form["price"]),
+            restaurant_id=int(request.form["restaurant_id"]),
+            pizza_id=int(request.form["pizza_id"])
+        )
+        
+        db.session.add(restaurant_pizza)
+        db.session.commit()
+
+        response=make_response(
+            restaurant_pizza_schema.dump(restaurant_pizza),
+            201
+        )
+
+        return response
+
+api.add_resource(RestaurantPizzas, '/restaurant_pizzas')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
