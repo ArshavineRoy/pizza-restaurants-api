@@ -5,7 +5,6 @@ from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from flask_marshmallow import Marshmallow
 
-
 from models import db, Restaurant, Pizza, RestaurantPizza
 
 app = Flask(__name__)
@@ -31,16 +30,6 @@ class RestaurantSchema(ma.SQLAlchemySchema):
 
 restaurants_schema = RestaurantSchema(many=True)
 
-class RestaurantByIDSchema(ma.SQLAlchemySchema):
-    class Meta:
-        model = Restaurant
-        ordered=True
-
-    id = ma.auto_field()
-    name = ma.auto_field()
-    address = ma.auto_field()
-
-restaurant_by_id_schema = RestaurantByIDSchema()
 
 class PizzasSchema(ma.SQLAlchemySchema):
 
@@ -64,6 +53,7 @@ class RestaurantPizzaSchema(ma.SQLAlchemySchema):
     price = ma.auto_field()
 
 restaurant_pizza_schema = RestaurantPizzaSchema()
+
 
 class Home(Resource):
     def get(self):
@@ -123,8 +113,25 @@ class RestaurantByID(Resource):
         
         else:
 
+            pizzas = Pizza.query.join(RestaurantPizza).filter(RestaurantPizza.restaurant_id == id).all()
+
+            response_body = {
+                "id": restaurant.id,
+                "name": restaurant.name,
+                "address": restaurant.address,
+                "pizzas": []
+            }
+
+            for pizza in pizzas:
+                pizza_data = {
+                    "id": pizza.id,
+                    "name": pizza.name,
+                    "ingredients": pizza.ingredients
+                }
+                response_body["pizzas"].append(pizza_data)
+
             response = make_response(
-                restaurant_by_id_schema.dump(restaurant),
+                response_body,
                 200
             )
             return response
@@ -175,6 +182,7 @@ class Pizzas(Resource):
 api.add_resource(Pizzas, '/pizzas')
 
 class RestaurantPizzas(Resource):
+
 
     def post(self):
         restaurant_pizza = RestaurantPizza(
