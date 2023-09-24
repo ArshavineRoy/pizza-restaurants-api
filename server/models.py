@@ -10,7 +10,7 @@ class Restaurant(db.Model, SerializerMixin):
     serialize_rules = ('-restaurant_pizzas.restaurant',)
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), unique=True)
+    name = db.Column(db.String(50))
     address = db.Column(db.String)
 
     restaurant_pizzas = db.relationship('RestaurantPizza', backref='restaurant')
