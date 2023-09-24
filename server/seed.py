@@ -131,8 +131,7 @@ if __name__ == '__main__':
 
         restaurant_pizzas = []
         for restaurant in restaurants:
-            restaurant = random.choice(restaurants)
-            for i in range(random.randint(1, 3)):
+            for i in range(random.randint(1, 4)):
                 restaurant_pizza=RestaurantPizza(
                     price=random.randint(1, 30),
                     restaurant=restaurant,
