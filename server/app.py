@@ -101,7 +101,7 @@ class RestaurantByID(Resource):
 
         if not restaurant:
             response_body = {
-                "message": "This record does not exist in our database. Please try again."
+                "error": "Restaurant not found"
             }
 
             response = make_response(
@@ -139,19 +139,31 @@ class RestaurantByID(Resource):
     def delete(self, id):
         restaurant = Restaurant.query.filter(Restaurant.id == id).first()
         
-        db.session.delete(restaurant)
-        db.session.commit()
+        if not restaurant:
+            response_body = {
+                "error": "Restaurant not found"
+            }
 
-        response_body ={
-            "Message": "Restaurant deleted successfully."
-        }
+            response = make_response(
+                response_body,
+                404
+            )
 
-        response = make_response(
-            response_body,
-            200
-        )
+            return response
+        
+        else:
+        
+            db.session.delete(restaurant)
+            db.session.commit()
 
-        return response
+            response_body ={}
+
+            response = make_response(
+                response_body,
+                204
+            )
+
+            return response
 
 api.add_resource(RestaurantByID, '/restaurants/<int:id>')
 
