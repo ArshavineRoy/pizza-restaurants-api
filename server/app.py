@@ -176,7 +176,7 @@ class Pizzas(Resource):
 
         if not pizzas:
             response_body = {
-                "message": "This record does not exist in our database. Please try again."
+                "error": "Pizza not found"
             }
 
             response = make_response(
