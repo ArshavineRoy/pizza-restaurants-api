@@ -176,7 +176,7 @@ class Pizzas(Resource):
 
         if not pizzas:
             response_body = {
-                "error": "Pizza not found"
+                "error": "Pizza not found."
             }
 
             response = make_response(
@@ -204,16 +204,34 @@ class RestaurantPizzas(Resource):
             pizza_id=int(request.form["pizza_id"])
         )
 
+        restaurant = Restaurant.query.filter(Restaurant.id == int(request.form["restaurant_id"])).first()
         pizza = Pizza.query.filter(Pizza.id == int(request.form["pizza_id"])).first()
 
-        db.session.add(restaurant_pizza)
-        db.session.commit()        
-        
-        response=make_response(
-            pizza_schema.dump(pizza),
-            201
-        )
+        if not pizza and not restaurant:
+            return make_response(
+                {"error": "Restaurant and Pizza not found."},
+                404
+            )
+        elif not restaurant:
+            return make_response(
+                {"error": "Restaurant not found."},
+                404
+            )
+        elif not pizza:
+            return make_response(
+                {"error": "Pizza not found."},
+                404
+            )
+        else:
+            db.session.add(restaurant_pizza)
+            db.session.commit()        
+            
+            response=make_response(
+                pizza_schema.dump(pizza),
+                201
+            )
 
-        return response
+            return response
+
 
 api.add_resource(RestaurantPizzas, '/restaurant_pizzas')
