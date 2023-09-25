@@ -41,6 +41,7 @@ class PizzasSchema(ma.SQLAlchemySchema):
     name = ma.auto_field()
     ingredients = ma.auto_field()
 
+pizza_schema = PizzasSchema()
 pizzas_schema = PizzasSchema(many=True)
 
 class RestaurantPizzaSchema(ma.SQLAlchemySchema):
@@ -202,12 +203,14 @@ class RestaurantPizzas(Resource):
             restaurant_id=int(request.form["restaurant_id"]),
             pizza_id=int(request.form["pizza_id"])
         )
-        
-        db.session.add(restaurant_pizza)
-        db.session.commit()
 
+        pizza = Pizza.query.filter(Pizza.id == int(request.form["pizza_id"])).first()
+
+        db.session.add(restaurant_pizza)
+        db.session.commit()        
+        
         response=make_response(
-            restaurant_pizza_schema.dump(restaurant_pizza),
+            pizza_schema.dump(pizza),
             201
         )
 
