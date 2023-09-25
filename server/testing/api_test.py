@@ -94,3 +94,28 @@ class TestFlaskAPI:
 
             db.session.delete(pizza)
             db.session.commit()
+
+    def test_creates_restaurant_pizzas(self):
+        '''can POST new restaurant_pizzas through "/restaurant_pizzas".'''
+
+        with app.app_context():
+
+            last = RestaurantPizza.query.order_by(RestaurantPizza.id.desc()).first()
+
+            db.session.delete(last)
+            db.session.commit()
+
+            response = app.test_client().post(
+                '/restaurant_pizzas',
+                data={
+                    "price": 23,
+                    "restaurant_id": 1,
+                    "pizza_id": 1,
+                }
+            )
+
+            last = RestaurantPizza.query.order_by(RestaurantPizza.id.desc()).first()
+
+            assert response.status_code == 201
+            assert response.content_type == 'application/json'
+            assert last.price == 23
