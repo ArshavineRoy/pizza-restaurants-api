@@ -65,3 +65,32 @@ class TestFlaskAPI:
             data = response.data.decode()
 
             assert(not data)
+
+    def test_pizzas_endpoint(self):
+        '''has a resource available at "/pizzas".'''
+        response = app.test_client().get('/pizzas')
+        assert(response.status_code == 200)
+
+    def test_pizzas_endpoint_returns_json(self):
+        '''provides a response content type of application/json at "/pizzas".'''
+        response = app.test_client().get('/pizzas')
+        assert response.content_type == 'application/json'
+
+    def test_pizzas_endpoint_returns_list_of_pizza_objects(self):
+        '''returns JSON representing models.Pizza objects.'''
+        with app.app_context():
+            pizza = Pizza(name="Supreme", ingredients="Shrimp, Ham, Eggs")
+            db.session.add(pizza)
+            db.session.commit()
+
+            response = app.test_client().get('/pizzas')
+            data = json.loads(response.data.decode())
+            assert(type(data) == list)
+            for record in data:
+                assert(type(record) == dict)
+                assert(record['id'])
+                assert(record['name'])
+                assert(record['ingredients'])
+
+            db.session.delete(pizza)
+            db.session.commit()
