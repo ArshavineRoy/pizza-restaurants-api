@@ -4,6 +4,7 @@ from flask import Flask, request, make_response
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from flask_marshmallow import Marshmallow
+from flask_restx import Api
 
 from models import db, Restaurant, Pizza, RestaurantPizza
 
@@ -17,7 +18,9 @@ migrate = Migrate(app, db)
 db.init_app(app)
 ma = Marshmallow(app)
 
-api = Api(app)
+# api = Api(app)
+api = Api()
+api.init_app(app)
 
 class RestaurantSchema(ma.SQLAlchemySchema):
     class Meta:
