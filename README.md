@@ -17,10 +17,12 @@ This is a Flask API that simulates a Pizza Restaurant domain.
 
 ## Features
 
-- Find all restaurants
-- Find a restaurant by ID
-- Delete a restaurant by ID
-- Find all pizzas
+- Create a restaurant
+- Get all restaurants
+- Find, update, or delete a restaurant by ID
+- Create a pizza
+- Get all pizzas
+- Find, update, or delete a pizza by ID
 - Create a new RestaurantPizza that is associated with an existing Pizza and Restaurant
 
 ## Installation
@@ -71,6 +73,20 @@ python3 run.py
 
 ## Usage
 
+1. **POST/restaurants**
+
+   Returns JSON data for the created restaurant in the format below:
+
+   ```JSON
+    [
+      {
+        "id": 1,
+        "name": "Kilimanjaro Jamia",
+        "address": "23 Banda Street, Nairobi"
+      },
+    ]
+   ```
+
 1. **GET/restaurants**
 
    Returns JSON data for restaurants in the format below:
@@ -92,7 +108,7 @@ python3 run.py
 
 1. **GET/restaurants/:id**
 
-   Returns JSON data for the restaurant in the format below:
+   Returns JSON data for the requested restaurant in the format below:
 
    ```JSON
      {
@@ -114,9 +130,52 @@ python3 run.py
      }
    ```
 
+1. **PATCH/restaurants/:id**
+
+   Returns JSON data for the updated restaurant in the format below:
+
+   - For example: `PATCH/restaurants/1` to update address from 23 to 25 Banda Street, Nairobi.
+
+     PATCH request:
+
+     ```JSON
+       [
+         {
+           "name": "Kilimanjaro Jamia",
+           "address": "231 Banda Street, Nairobi"
+         },
+       ]
+     ```
+
+     Response:
+
+     ```JSON
+       [
+         {
+           "id": 1,
+           "name": "Kilimanjaro Jamia",
+           "address": "231 Banda Street, Nairobi"
+         },
+       ]
+     ```
+
 1. **DELETE /restaurants/:id**
 
    Removes a restaurant from the database along with any RestaurantPizzas that are associated with it and returns an empty dictionary.
+
+1. **POST/pizzas**
+
+   Returns JSON data for the created pizza in the format below:
+
+   ```JSON
+    [
+      {
+        "id": 1,
+        "name": "BBQ chicken",
+        "ingredients": "Dough, Cheese, chicken"
+      },
+    ]
+   ```
 
 1. **GET /pizzas**
 
@@ -137,9 +196,56 @@ python3 run.py
     ]
    ```
 
+1. **GET/pizzas/:id**
+
+   Returns JSON data for the requested pizza in the format below:
+
+   ```JSON
+    [
+      {
+        "id": 1,
+        "name": "BBQ chicken",
+        "ingredients": "Dough, Cheese, chicken"
+      },
+    ]
+   ```
+
+1. **PATCH/pizzas/:id**
+
+   Returns JSON data for the updated pizza in the format below:
+
+   - For example: `PATCH/pizzas/1` to add `tomato sauce` ingredient.
+
+     PATCH request:
+
+     ```JSON
+       [
+         {
+           "name": "BBQ chicken",
+           "ingredients": "Dough, Cheese, chicken, tomato sauce"
+         },
+       ]
+     ```
+
+     Response:
+
+     ```JSON
+       [
+         {
+           "id": 1,
+           "name": "BBQ chicken",
+           "ingredients": "Dough, Cheese, chicken, tomato sauce"
+         },
+       ]
+     ```
+
+1. **DELETE /pizza/:id**
+
+   Removes a pizza from the database along with any Restaurants or RestaurantPizzas that are associated with it and returns an empty dictionary.
+
 1. **POST /restaurant_pizzas**
 
-   Creates a new RestaurantPizza that is associated with an existing Pizza and Restaurant and returns JSON data for the pizza.
+   Creates a new RestaurantPizza that is associated with an existing Pizza and Restaurant and returns JSON data for the pizza in the format below:
 
    ```JSON
    [

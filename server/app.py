@@ -32,6 +32,7 @@ class RestaurantSchema(ma.SQLAlchemySchema):
     name = ma.auto_field()
     address = ma.auto_field()
 
+restaurant_schema = RestaurantSchema()
 restaurants_schema = RestaurantSchema(many=True)
 
 
@@ -61,11 +62,25 @@ restaurant_pizza_schema = RestaurantPizzaSchema()
 
 
 # restx swagger input
+restaurant_model = api.model(
+    "Restaurant Input", {
+        "name": fields.String,
+        "address": fields.String,
+    }
+)
+
 restaurant_pizza_model = api.model(
     "RestaurantPizza Input", {
         "price": fields.Integer,
         "restaurant_id": fields.Integer,
         "pizza_id": fields.Integer,
+    }
+)
+
+pizza_model = api.model(
+    "Pizza Input", {
+        "name": fields.String,
+        "ingredients": fields.String,
     }
 )
 
@@ -92,6 +107,22 @@ class Restaurants(Resource):
                 200
             )
             return response
+        
+    
+    @ns.expect(restaurant_model)
+    def post(self):
+        new_restaurant= Restaurant(
+            name=ns.payload['name'],
+            address=ns.payload['address']
+        )
+
+        db.session.add(new_restaurant)
+        db.session.commit()
+
+        return make_response(
+            restaurant_schema.dump(new_restaurant),
+            201
+        )
 
 @ns.route("/restaurants/<int:id>")
 class RestaurantByID(Resource):
@@ -165,6 +196,23 @@ class RestaurantByID(Resource):
             )
 
             return response
+        
+    @ns.expect(restaurant_model)
+    def patch(self, id):
+
+        restaurant = Restaurant.query.get(id)
+
+        if restaurant:
+            restaurant.name = ns.payload['name']
+            restaurant.address = ns.payload['address']
+        
+            db.session.commit()
+            
+            return restaurant_schema.dump(restaurant), 200
+        else:
+            return { "error": "Restaurant not found."}, 404
+        
+    
 
 @ns.route("/pizzas")
 class Pizzas(Resource):
@@ -189,6 +237,60 @@ class Pizzas(Resource):
                 200
             )
             return response
+        
+    @ns.expect(pizza_model)
+    def post(self):
+        new_flavor= Pizza(
+            name=ns.payload['name'],
+            ingredients=ns.payload['ingredients']
+        )
+
+        db.session.add(new_flavor)
+        db.session.commit()
+        
+        return make_response(
+            pizza_schema.dump(new_flavor),
+            201
+        )
+
+
+@ns.route("/pizzas/<int:id>")
+class PizzaByID(Resource):
+
+    def get(self, id):
+        pizza_exists = Pizza.query.get(id)
+
+        if pizza_exists:
+            return pizza_schema.dump(pizza_exists), 200
+        else:
+            return { "error": "Pizza not found."}, 404
+
+    @ns.expect(pizza_model)
+    def patch(self, id):
+
+        pizza = Pizza.query.get(id)
+
+        if pizza:
+            pizza.name = ns.payload['name']
+            pizza.ingredients = ns.payload['ingredients']
+        
+            db.session.commit()
+            
+            return pizza_schema.dump(pizza), 200
+        else:
+            return { "error": "Pizza not found."}, 404
+        
+    def delete(self, id):
+        pizza = Pizza.query.get(id)
+
+        if pizza:
+            db.session.delete(pizza)
+            db.session.commit()
+            return {"message": "Pizza deleted successfully."}, 204
+        else:
+            return { "error": "Pizza not found."}, 404
+        
+        
 
 @ns.route("/restaurant_pizzas")
 class RestaurantPizzas(Resource):
