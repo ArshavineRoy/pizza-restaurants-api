@@ -25,7 +25,7 @@ ipython==7.34.0
 itsdangerous==2.1.2
 jedi==0.19.0
 Jinja2==3.1.2
-jsonschema==4.19.1
+jsonschema==4.17.3
 jsonschema-specifications==2023.7.1
 Mako==1.2.4
 MarkupSafe==2.1.3
