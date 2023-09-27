@@ -247,6 +247,21 @@ class PizzaByID(Resource):
             return pizza_schema.dump(pizza_exists), 200
         else:
             return { "error": "Pizza not found."}, 404
+
+    @ns.expect(pizza_model)
+    def patch(self, id):
+
+        pizza = Pizza.query.get(id)
+
+        if pizza:
+            pizza.name = ns.payload['name']
+            pizza.ingredients = ns.payload['ingredients']
+        
+            db.session.commit()
+            
+            return pizza_schema.dump(pizza), 200
+        else:
+            return { "error": "Pizza not found."}, 404
         
     def delete(self, id):
         pizza = Pizza.query.get(id)
