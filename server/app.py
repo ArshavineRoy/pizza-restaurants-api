@@ -196,6 +196,23 @@ class RestaurantByID(Resource):
             )
 
             return response
+        
+    @ns.expect(restaurant_model)
+    def patch(self, id):
+
+        restaurant = Restaurant.query.get(id)
+
+        if restaurant:
+            restaurant.name = ns.payload['name']
+            restaurant.address = ns.payload['address']
+        
+            db.session.commit()
+            
+            return restaurant_schema.dump(restaurant), 200
+        else:
+            return { "error": "Restaurant not found."}, 404
+        
+    
 
 @ns.route("/pizzas")
 class Pizzas(Resource):
