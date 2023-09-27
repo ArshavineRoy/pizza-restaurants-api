@@ -248,6 +248,17 @@ class PizzaByID(Resource):
         else:
             return { "error": "Pizza not found."}, 404
         
+    def delete(self, id):
+        pizza = Pizza.query.get(id)
+
+        if pizza:
+            db.session.delete(pizza)
+            db.session.commit()
+            return {"message": "Pizza deleted successfully."}, 204
+        else:
+            return { "error": "Pizza not found."}, 404
+        
+        
 
 @ns.route("/restaurant_pizzas")
 class RestaurantPizzas(Resource):
