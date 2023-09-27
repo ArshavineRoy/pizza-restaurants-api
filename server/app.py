@@ -2,9 +2,8 @@
 
 from flask import Flask, request, make_response
 from flask_migrate import Migrate
-from flask_restful import Api, Resource
 from flask_marshmallow import Marshmallow
-from flask_restx import Api
+from flask_restx import Api, Resource, Namespace
 
 from models import db, Restaurant, Pizza, RestaurantPizza
 
@@ -18,9 +17,11 @@ migrate = Migrate(app, db)
 db.init_app(app)
 ma = Marshmallow(app)
 
-# api = Api(app)
 api = Api()
 api.init_app(app)
+
+ns = Namespace("api")
+api.add_namespace(ns)
 
 class RestaurantSchema(ma.SQLAlchemySchema):
     class Meta:
@@ -58,7 +59,7 @@ class RestaurantPizzaSchema(ma.SQLAlchemySchema):
 
 restaurant_pizza_schema = RestaurantPizzaSchema()
 
-
+@ns.route("/home")
 class Home(Resource):
     def get(self):
         response_dict = {
@@ -70,8 +71,7 @@ class Home(Resource):
         )
 
         return response
-api.add_resource(Home, '/')
-
+@ns.route("/restaurants")
 class Restaurants(Resource):
 
     def get(self):
@@ -95,8 +95,7 @@ class Restaurants(Resource):
             )
             return response
 
-api.add_resource(Restaurants, '/restaurants')
-
+@ns.route("/restaurants/<int:id>")
 class RestaurantByID(Resource):
 
     def get(self, id):
@@ -169,9 +168,7 @@ class RestaurantByID(Resource):
 
             return response
 
-api.add_resource(RestaurantByID, '/restaurants/<int:id>')
-
-
+@ns.route("/pizzas")
 class Pizzas(Resource):
 
     def get(self):
@@ -195,8 +192,7 @@ class Pizzas(Resource):
             )
             return response
 
-api.add_resource(Pizzas, '/pizzas')
-
+@ns.route("/restaurant_pizzas")
 class RestaurantPizzas(Resource):
 
 
@@ -235,6 +231,3 @@ class RestaurantPizzas(Resource):
             )
 
             return response
-
-
-api.add_resource(RestaurantPizzas, '/restaurant_pizzas')
