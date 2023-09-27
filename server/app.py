@@ -2,8 +2,8 @@
 
 from flask import Flask, request, make_response
 from flask_migrate import Migrate
-from flask_restful import Api, Resource
 from flask_marshmallow import Marshmallow
+from flask_restx import Api, Resource, Namespace, fields
 
 from models import db, Restaurant, Pizza, RestaurantPizza
 
@@ -17,7 +17,11 @@ migrate = Migrate(app, db)
 db.init_app(app)
 ma = Marshmallow(app)
 
-api = Api(app)
+api = Api()
+api.init_app(app)
+
+ns = Namespace("api")
+api.add_namespace(ns)
 
 class RestaurantSchema(ma.SQLAlchemySchema):
     class Meta:
@@ -56,19 +60,28 @@ class RestaurantPizzaSchema(ma.SQLAlchemySchema):
 restaurant_pizza_schema = RestaurantPizzaSchema()
 
 
-class Home(Resource):
-    def get(self):
-        response_dict = {
-            "message": "Welcome to the RestaurantPizza RESTful API"
-        }
-        response = make_response(
-            response_dict,
-            200
-        )
+# restx swagger input
+restaurant_pizza_model = api.model(
+    "RestaurantPizza Input", {
+        "price": fields.Integer,
+        "restaurant_id": fields.Integer,
+        "pizza_id": fields.Integer,
+    }
+)
 
-        return response
-api.add_resource(Home, '/')
+# @ns.route("/welcome")
+# class Welcome(Resource):
+#     def get(self):
+#         response_dict = {
+#             "message": "Welcome to the RestaurantPizza RESTful API"
+#         }
+#         response = make_response(
+#             response_dict,
+#             200
+#         )
 
+#         return response
+@ns.route("/restaurants")
 class Restaurants(Resource):
 
     def get(self):
@@ -92,8 +105,7 @@ class Restaurants(Resource):
             )
             return response
 
-api.add_resource(Restaurants, '/restaurants')
-
+@ns.route("/restaurants/<int:id>")
 class RestaurantByID(Resource):
 
     def get(self, id):
@@ -142,7 +154,7 @@ class RestaurantByID(Resource):
         
         if not restaurant:
             response_body = {
-                "error": "Restaurant not found"
+                "error": "Restaurant not found."
             }
 
             response = make_response(
@@ -166,9 +178,7 @@ class RestaurantByID(Resource):
 
             return response
 
-api.add_resource(RestaurantByID, '/restaurants/<int:id>')
-
-
+@ns.route("/pizzas")
 class Pizzas(Resource):
 
     def get(self):
@@ -192,20 +202,20 @@ class Pizzas(Resource):
             )
             return response
 
-api.add_resource(Pizzas, '/pizzas')
-
+@ns.route("/restaurant_pizzas")
 class RestaurantPizzas(Resource):
 
-
+    @ns.expect(restaurant_pizza_model)
     def post(self):
         restaurant_pizza = RestaurantPizza(
-            price=int(request.form["price"]),
-            restaurant_id=int(request.form["restaurant_id"]),
-            pizza_id=int(request.form["pizza_id"])
+            price=ns.payload["price"],
+            restaurant_id=ns.payload["restaurant_id"],
+            pizza_id=ns.payload["pizza_id"]
         )
+        # price = ns.payload["price"]
+        restaurant = Restaurant.query.filter(Restaurant.id == int(ns.payload["restaurant_id"])).first()
+        pizza = Pizza.query.filter(Pizza.id == int(ns.payload["pizza_id"])).first()
 
-        restaurant = Restaurant.query.filter(Restaurant.id == int(request.form["restaurant_id"])).first()
-        pizza = Pizza.query.filter(Pizza.id == int(request.form["pizza_id"])).first()
 
         if not pizza and not restaurant:
             return make_response(
@@ -222,6 +232,14 @@ class RestaurantPizzas(Resource):
                 {"error": "Pizza not found."},
                 404
             )
+        elif 1 < ns.payload["price"] > 30:
+            return make_response(
+                {
+                    "error": "Validation Error",
+                    "message": "Price must be between 1 and 30"
+                },
+                422
+            )
         else:
             db.session.add(restaurant_pizza)
             db.session.commit()        
@@ -232,6 +250,3 @@ class RestaurantPizzas(Resource):
             )
 
             return response
-
-
-api.add_resource(RestaurantPizzas, '/restaurant_pizzas')

@@ -119,10 +119,14 @@ if __name__ == '__main__':
         db.session.add_all(restaurants)
 
         pizzas = []
-        for _ in range(25):
+        for pz in pizza_flavors:
             pizza = Pizza(
-                name=random.choice(pizza_flavors),
-                ingredients=random.choice(pizza_ingredients)
+                name=pz,
+                ingredients=f"{random.choice(pizza_ingredients)}, " +\
+                    f"{random.choice(pizza_ingredients)}, " +\
+                    f"{random.choice(pizza_ingredients)}, " +\
+                    f"{random.choice(pizza_ingredients)}, " +\
+                    f"{random.choice(pizza_ingredients)}"
             )
 
             pizzas.append(pizza)
