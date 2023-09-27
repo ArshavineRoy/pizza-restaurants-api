@@ -70,7 +70,7 @@ restaurant_pizza_model = api.model(
 )
 
 @ns.route("/home")
-class Home(Resource):
+class Welcome(Resource):
     def get(self):
         response_dict = {
             "message": "Welcome to the RestaurantPizza RESTful API"
