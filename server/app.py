@@ -77,6 +77,13 @@ restaurant_pizza_model = api.model(
     }
 )
 
+pizza_model = api.model(
+    "Pizza Input", {
+        "name": fields.String,
+        "ingredients": fields.String,
+    }
+)
+
 @ns.route("/restaurants")
 class Restaurants(Resource):
 
@@ -111,7 +118,7 @@ class Restaurants(Resource):
 
         db.session.add(new_restaurant)
         db.session.commit()
-        
+
         return make_response(
             restaurant_schema.dump(new_restaurant),
             201
@@ -213,6 +220,21 @@ class Pizzas(Resource):
                 200
             )
             return response
+        
+    @ns.expect(pizza_model)
+    def post(self):
+        new_flavor= Pizza(
+            name=ns.payload['name'],
+            ingredients=ns.payload['ingredients']
+        )
+
+        db.session.add(new_flavor)
+        db.session.commit()
+        
+        return make_response(
+            pizza_schema.dump(new_flavor),
+            201
+        )
 
 @ns.route("/restaurant_pizzas")
 class RestaurantPizzas(Resource):
