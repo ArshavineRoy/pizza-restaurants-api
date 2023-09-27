@@ -32,6 +32,7 @@ class RestaurantSchema(ma.SQLAlchemySchema):
     name = ma.auto_field()
     address = ma.auto_field()
 
+restaurant_schema = RestaurantSchema()
 restaurants_schema = RestaurantSchema(many=True)
 
 
@@ -61,6 +62,13 @@ restaurant_pizza_schema = RestaurantPizzaSchema()
 
 
 # restx swagger input
+restaurant_model = api.model(
+    "Restaurant Input", {
+        "name": fields.String,
+        "address": fields.String,
+    }
+)
+
 restaurant_pizza_model = api.model(
     "RestaurantPizza Input", {
         "price": fields.Integer,
@@ -92,6 +100,22 @@ class Restaurants(Resource):
                 200
             )
             return response
+        
+    
+    @ns.expect(restaurant_model)
+    def post(self):
+        new_restaurant= Restaurant(
+            name=ns.payload['name'],
+            address=ns.payload['address']
+        )
+
+        db.session.add(new_restaurant)
+        db.session.commit()
+        
+        return make_response(
+            restaurant_schema.dump(new_restaurant),
+            201
+        )
 
 @ns.route("/restaurants/<int:id>")
 class RestaurantByID(Resource):
