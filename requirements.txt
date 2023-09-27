@@ -55,5 +55,5 @@ tomli==2.0.1
 traitlets==5.9.0
 typing_extensions==4.7.1
 wcwidth==0.2.6
-Werkzeug==2.3.7
+Werkzeug==2.2.3
 zipp==3.17.0
