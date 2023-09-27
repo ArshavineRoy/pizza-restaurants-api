@@ -1,15 +1,22 @@
 # Pizza Restaurants Flask API
+
 ## Phase 4 Week 1 : Flask Code Challenge
 
 [![license](https://img.shields.io/badge/license-%20MIT%20-green.svg)](./LICENSE)
-![python version](https://img.shields.io/badge/python-3.10-blue.svg)
+![python version](https://img.shields.io/badge/python-3.10.12-blue.svg)
 ![Flask version](https://img.shields.io/badge/flask-2.3.3-red.svg)
-![Flask-RESTful version](https://img.shields.io/badge/Flask_RESTful-0.3.10-cyan.svg)
+![Flask-RESTX version](https://img.shields.io/badge/Flask_RESTX-1.1.0-cyan.svg)
+![Gunicorn version](https://img.shields.io/badge/gunicorn-21.2.0-orange.svg)
+![Pytest version](https://img.shields.io/badge/pytest-7.4.2-white.svg)
 
 ## Introduction
+
 This is a Flask API that simulates a Pizza Restaurant domain.
 
+![API Image](image.png)
+
 ## Features
+
 - Find all restaurants
 - Find a restaurant by ID
 - Delete a restaurant by ID
@@ -48,21 +55,26 @@ pipenv install
 pipenv shell
 ```
 
-### 5. Run the Flask server
+### 5. If needed, seed the database with
 
-Navigate to the `server` directory and run:
+```python
+python3 seed.py
+```
+
+### 6. Run the Flask server from the root directory
 
 ```python
 python3 run.py
 ```
-### 6. Use an API management tool e.g., `Postman` / `Insomnia` to make requests
 
+### 7. Use an API management tool e.g., `Postman` / `Insomnia` to make requests
 
 ## Usage
 
 1. **GET/restaurants**
 
    Returns JSON data for restaurants in the format below:
+
    ```JSON
     [
       {
@@ -76,9 +88,10 @@ python3 run.py
         "address": "Westgate Mall, Mwanzi Road, Nrb 100"
       }
     ]
-    ```
+   ```
+
 1. **GET/restaurants/:id**
-  
+
    Returns JSON data for the restaurant in the format below:
 
    ```JSON
@@ -99,10 +112,11 @@ python3 run.py
         }
        ]
      }
-    ```
+   ```
+
 1. **DELETE /restaurants/:id**
-  
-   Removes a restaurant from the database along with any RestaurantPizzas that are associated with it.
+
+   Removes a restaurant from the database along with any RestaurantPizzas that are associated with it and returns an empty dictionary.
 
 1. **GET /pizzas**
 
@@ -112,7 +126,7 @@ python3 run.py
    [
       {
         "id": 1,
-        "name": "Cheese",
+        "name": "Hawaiian",
         "ingredients": "Dough, Tomato Sauce, Cheese"
       },
       {
@@ -122,11 +136,21 @@ python3 run.py
       }
     ]
    ```
+
 1. **POST /restaurant_pizzas**
 
-   Creates a new RestaurantPizza that is associated with an existing Pizza and Restaurant.
+   Creates a new RestaurantPizza that is associated with an existing Pizza and Restaurant and returns JSON data for the pizza.
 
-   
+   ```JSON
+   [
+     {
+       "id": 10,
+       "name": "Hawaiian",
+       "ingredients": "Dough, Tomato Sauce, Cheese"
+     }
+   ]
+   ```
+
 ## Author & License
 
 Authored by [Arshavine Waema](https://github.com/ArshavineRoy).
