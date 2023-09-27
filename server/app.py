@@ -69,7 +69,7 @@ restaurant_pizza_model = api.model(
     }
 )
 
-@ns.route("/home")
+@ns.route("/welcome")
 class Welcome(Resource):
     def get(self):
         response_dict = {
