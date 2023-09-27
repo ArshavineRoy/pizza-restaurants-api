@@ -236,6 +236,19 @@ class Pizzas(Resource):
             201
         )
 
+
+@ns.route("/pizzas/<int:id>")
+class PizzaByID(Resource):
+
+    def get(self, id):
+        pizza_exists = Pizza.query.get(id)
+
+        if pizza_exists:
+            return pizza_schema.dump(pizza_exists), 200
+        else:
+            return { "error": "Pizza not found."}, 404
+        
+
 @ns.route("/restaurant_pizzas")
 class RestaurantPizzas(Resource):
 
