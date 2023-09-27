@@ -1,20 +1,21 @@
-from app import app
-from models import db, Restaurant, Pizza, RestaurantPizza
+from server.app import app
+from server.models import db, Restaurant, Pizza, RestaurantPizza
 from faker import Faker
 import random
 
 
 ke_restaurants = [
-
+    "Java House",
+    "Artcaffe",
+    "Cafe Deli",
+    "Kilimanjaro Jamia",
+    "Villa Rosa Kempinski",
     "Carnivore Restaurant",
     "Talisman Restaurant",
     "Mama Oliech Restaurant",
     "Nyama Mama",
     "Habesha Restaurant",
     "The Talisman",
-    "Java House",
-    "Artcaffe",
-    "Cafe Deli",
     "Mama Rocks Gourmet Burgers",
     "About Thyme Restaurant",
     "Cafe Maghreb",
@@ -120,13 +121,18 @@ if __name__ == '__main__':
 
         pizzas = []
         for pz in pizza_flavors:
+
+            all_ingredients = {
+                f"{random.choice(pizza_ingredients)}, " +\
+                f"{random.choice(pizza_ingredients)}, " +\
+                f"{random.choice(pizza_ingredients)}, " +\
+                f"{random.choice(pizza_ingredients)}, " +\
+                f"{random.choice(pizza_ingredients)}"
+            }
+
             pizza = Pizza(
                 name=pz,
-                ingredients=f"{random.choice(pizza_ingredients)}, " +\
-                    f"{random.choice(pizza_ingredients)}, " +\
-                    f"{random.choice(pizza_ingredients)}, " +\
-                    f"{random.choice(pizza_ingredients)}, " +\
-                    f"{random.choice(pizza_ingredients)}"
+                ingredients=', '.join(all_ingredients)
             )
 
             pizzas.append(pizza)

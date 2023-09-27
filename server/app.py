@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
 from flask_restx import Api, Resource, Namespace, fields
 
-from models import db, Restaurant, Pizza, RestaurantPizza
+from server.models import db, Restaurant, Pizza, RestaurantPizza
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
